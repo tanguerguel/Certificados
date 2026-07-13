@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Certificados - CUSCO</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="container">
+        <div class="main-card">
+            <!-- ========== COLUMNA IZQUIERDA: INSTRUCCIONES ========== -->
+            <div class="left-panel">
+                
+                
+                <div class="instructions">
+                    <h4>📋 INSTRUCCIONES PARA OBTENER TU CERTIFICADO</h4>
+                    
+                    <div class="instruction-item">
+                        <span class="icon">1️⃣</span>
+                        <div>
+                            <strong>Ingresa tu Apellido y Nombre</strong>
+                            <p>Escribe Tu Apellido y Nombre "</p>
+                        </div>
+                    </div>
+                    
+                    <div class="instruction-item">
+                        <span class="icon">2️⃣</span>
+                        <div>
+                            <strong>Ingresa tu contraseña</strong>
+                            <p>Numero de Registro de 5 digitos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="instruction-item">
+                        <span class="icon">3️⃣</span>
+                        <div>
+                            <strong>Haz clic en "Ingresar"</strong>
+                            <p>Verifica que tus datos sean correctos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="instruction-item">
+                        <span class="icon">4️⃣</span>
+                        <div>
+                            <strong>Descarga tu certificado</strong>
+                            <p>Una vez autenticado, aparecerá el botón para descargar</p>
+                        </div>
+                        
+                    </div>
+                     <div class="logo-conteiner">                        
+                        <div>
+                           <img src="region.png" alt="Logo Cusco" class="logo-small">                            
+                        </div>                        
+                    </div>
+                </div>
+                
+                
+            </div>
+            
+            <!-- ========== COLUMNA DERECHA: LOGIN ========== -->
+            <div class="right-panel">
+                <div class="login-card">
+                    <div class="logo-conteiner">                        
+                        <div>
+                           <img src="logo-pladec-grisoscuro.png" alt="Logo Cusco" class="logo-cree"> 
+                        </div> 
+                    
+                    <div class="header-info">
+                        <h2> ENTREGA DE CERTIFICADOS VIRTUALES</h2>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="nombre">Usuario (Nombre):</label>
+                            <input type="text" id="nombre" placeholder="Ingresa tu Nombre" autocomplete="username" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contrasena">Contraseña:</label>
+                            <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
+                        </div>
+                                    
+                        <button type="submit" class="btn-login">Ingresar</button>
+                        
+                        <div id="errorMsg" class="error-msg"></div>
+                        <div id="loadingMsg" class="loading-msg"></div>
+                    </form>
+                    
+                    <div id="downloadSection" style="display: none; margin-top: 20px;">
+                        <button id="btnDownload" class="btn-download">📥 Descargar Certificado</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

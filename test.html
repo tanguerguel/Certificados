@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba de Backticks</title>
+</head>
+<body>
+    <div id="test"></div>
+    <script>
+        // Los backticks (```) permiten strings multilínea
+        const nombre = "Juan Pérez";
+        const html = `
+            <div style="background: lightblue; padding: 20px;">
+                <h1>Certificado</h1>
+                <p>Nombre: ${nombre}</p>
+                <p>¡Los backticks funcionan correctamente!</p>
+            </div>
+        `;
+        document.getElementById('test').innerHTML = html;
+        console.log('HTML generado:', html);
+    </script>
+</body>
+</html>

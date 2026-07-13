@@ -1,0 +1,367 @@
+/* ============================================
+   RESET Y BASE
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2e1a1a 0%, #3e1616 40%, #600f0f 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL
+   ============================================ */
+.container {
+    width: 100%;
+    max-width: 1100px;
+}
+
+.main-card {
+    display: flex;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    min-height: 550px;
+}
+
+/* ============================================
+   COLUMNA IZQUIERDA - INSTRUCCIONES
+   ============================================ */
+.left-panel {
+    flex: 1.2;
+    padding: 40px 35px;
+    background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.header-info {
+    text-align: center;
+    padding-bottom: 25px;
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 25px;
+}
+
+.header-info h2 {
+    color: #2e1a1a;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.4;
+}
+
+.header-info h3 {
+    color: #600f0f;
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: 5px;
+    letter-spacing: 3px;
+}
+
+.instructions {
+    flex: 1;
+}
+
+.instructions h4 {
+    color: #2e1a1a;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 18px;
+    background: white;
+    padding: 14px 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.instruction-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.instruction-item .icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.instruction-item strong {
+    display: block;
+    color: #2e1a1a;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.instruction-item p {
+    color: #6c757d;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.footer-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid #dee2e6;
+}
+
+.link-btn {
+    flex: 1;
+    text-align: center;
+    padding: 10px 15px;
+    background: #2e1a1a;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.link-btn:hover {
+    background: #600f0f;
+    transform: scale(1.02);
+}
+/* ===== LOGO ===== */
+.logo-container {
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.logo-small {
+    width: 250px ;          /* ← AJUSTA ESTE VALOR */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+}
+.logo-cree {
+    width: 300px;          /* ← AJUSTA ESTE VALOR */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    
+}
+
+/* Opcional: efecto hover */
+.logo-small:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s;
+}
+
+/* ============================================
+   COLUMNA DERECHA - LOGIN
+   ============================================ */
+.right-panel {
+    flex: 1;
+    padding: 40px 35px;
+    background: white;
+    display: flex;
+    align-items: center;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.login-card h1 {
+    color: #2e1a1a;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 11px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background: #f8f9fa;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #600f0f;
+    box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
+    background: white;
+}
+
+.form-group input::placeholder {
+    color: #aaa;
+}
+
+.forgot-password {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 12px 0 22px 0;
+}
+
+.forgot-link {
+    color: #820924;
+    font-size: 12px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.forgot-link:hover {
+    color: #2e1a1a;
+    text-decoration: underline;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #2e1a1a 0%, #820924 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.btn-login:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(15, 52, 96, 0.3);
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+.btn-download {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.btn-download:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+}
+
+.btn-download:active {
+    transform: scale(0.98);
+}
+
+.error-msg {
+    color: #e74c3c;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    display: none;
+}
+
+.loading-msg {
+    color: #600f0f;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    display: none;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 900px) {
+    .main-card {
+        flex-direction: column;
+        min-height: auto;
+    }
+    
+    .left-panel {
+        padding: 30px 25px;
+    }
+    
+    .right-panel {
+        padding: 30px 25px;
+    }
+    
+    .login-card {
+        max-width: 100%;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-card {
+        border-radius: 16px;
+    }
+    
+    .left-panel,
+    .right-panel {
+        padding: 20px 16px;
+    }
+    
+    .header-info h2 {
+        font-size: 15px;
+    }
+    
+    .header-info h3 {
+        font-size: 22px;
+    }
+    
+    .instruction-item {
+        padding: 12px 14px;
+    }
+    
+    .instruction-item .icon {
+        font-size: 22px;
+    }
+    
+    .login-card h1 {
+        font-size: 19px;
+    }
+    
+}
