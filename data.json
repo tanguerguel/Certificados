@@ -13591,6 +13591,14 @@
       "num_registro": "01700",
       "DNI": "",
       "curso": "ingles"
+    },
+    {
+      "id": "01700",
+      "nombre": "HERRERA PUMA CARLOS DANIEL",
+      "contrasena": "01701",
+      "num_registro": "01701",
+      "DNI": "",
+      "curso": "ingles"
     }
   ]
 }

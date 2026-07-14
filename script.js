@@ -2,24 +2,34 @@ let usuariosData = [];
 let imagenBase64 = null;
 let usuarioActual = null;
 let imagenPosteriorCache = {};
+let imagenFrontalCache = {};
 
 // ============================================
 // CONFIGURACIÓN
 // ============================================
 const CONFIG = {
-    imagenBase: 'certificado_base.jpg',  // ✅ JPG
-    posiciones: {
-        nombre: { x: 148, y: 80 },
-        registro: { x: 40, y: 175 }
+    // Mapeo de cursos a imágenes FRONTALES (base)
+    cursoFrontal: {
+        'ingles'    : 'certificado_base.jpg',  
+        'ashaninka' : 'certificado_base.jpg',    
+        'matsigenka': 'certificado_base.jpg',
+        'español'   : 'certificado_base.jpg',
+        'default'   : 'certificado_base.jpg'  
     },
-    // Mapeo de cursos a imágenes posteriores
+    // Mapeo de cursos a imágenes POSTERIORES
     cursoPosterior: {
         'ingles'    : 'certificado_posterior1.jpg',  
         'ashaninka' : 'certificado_posterior1.jpg',    
         'matsigenka': 'certificado_posterior1.jpg',
+        'español'   : 'certificado_posterior1.jpg',
         'default'   : 'certificado_posterior1.jpg'  
+    },
+    posiciones: {
+        nombre: { x: 148, y: 80 },
+        registro: { x: 40, y: 175 }
     }
 };
+
 // ============================================
 // CARGAR DATOS
 // ============================================
@@ -33,9 +43,7 @@ async function cargarDatos() {
         console.log('📋 Primer usuario:', usuariosData[0]);
     } catch (error) {
         console.warn('⚠️ Error cargando datos:', error);
-        // Datos de ejemplo para pruebas
-        usuariosData = [
-            ];
+        usuariosData = [];
     }
 }
 
@@ -84,20 +92,31 @@ async function imagenABase64(url) {
 }
 
 // ============================================
+// OBTENER IMAGEN FRONTAL SEGÚN CURSO
+// ============================================
+function getImagenFrontal(curso) {
+    const cursoKey = curso ? curso.toLowerCase().trim() : '';
+    
+    if (CONFIG.cursoFrontal[cursoKey]) {
+        return CONFIG.cursoFrontal[cursoKey];
+    }
+    
+    console.warn(`⚠️ Curso "${curso}" no tiene imagen frontal asignada, usando default`);
+    return CONFIG.cursoFrontal.default || 'certificado_base.jpg';
+}
+
+// ============================================
 // OBTENER IMAGEN POSTERIOR SEGÚN CURSO
 // ============================================
 function getImagenPosterior(curso) {
-    // Normalizar curso (minúsculas, sin espacios)
     const cursoKey = curso ? curso.toLowerCase().trim() : '';
     
-    // Buscar en el mapeo
     if (CONFIG.cursoPosterior[cursoKey]) {
         return CONFIG.cursoPosterior[cursoKey];
     }
     
-    // Si no encuentra, usar la primera como default
-    console.warn(`⚠️ Curso "${curso}" no tiene imagen asignada, usando certificado_posterior1.jpg`);
-    return 'certificado_posterior1.jpg';
+    console.warn(`⚠️ Curso "${curso}" no tiene imagen posterior asignada, usando default`);
+    return CONFIG.cursoPosterior.default || 'certificado_posterior1.jpg';
 }
 
 // ============================================
@@ -109,24 +128,30 @@ async function descargarCertificado(usuario) {
     loadingMsg.textContent = '⏳ Generando certificado...';
 
     try {
-        // === VALIDAR USUARIO ===
         if (!usuario) throw new Error('Usuario es null o undefined');
         if (!usuario.nombre) throw new Error('El usuario no tiene propiedad "nombre"');
         if (!usuario.num_registro) throw new Error('El usuario no tiene propiedad "num_registro"');
 
         console.log('📋 Usuario recibido:', usuario);
+        console.log(`📚 Curso: ${usuario.curso}`);
 
         // 1. Cargar pdf-lib
         console.log('📚 Cargando pdf-lib...');
         await cargarLibreria('https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js');
         console.log('✅ pdf-lib cargado');
 
-        // 2. Cargar imagen frontal
-        if (!imagenBase64) {
-            imagenBase64 = await imagenABase64(CONFIG.imagenBase);
+        // 2. Obtener imagen frontal según curso
+        const imagenFrontal = getImagenFrontal(usuario.curso);
+        console.log(`📸 Imagen frontal para curso "${usuario.curso}": ${imagenFrontal}`);
+        
+        // 3. Cargar imagen frontal (con caché)
+        let imagenFrontalBase64 = imagenFrontalCache[imagenFrontal];
+        if (!imagenFrontalBase64) {
+            imagenFrontalBase64 = await imagenABase64(imagenFrontal);
+            imagenFrontalCache[imagenFrontal] = imagenFrontalBase64;
         }
 
-        // 3. Cargar imagen posterior según curso
+        // 4. Obtener imagen posterior según curso
         const imagenPosterior = getImagenPosterior(usuario.curso);
         console.log(`📸 Imagen posterior para curso "${usuario.curso}": ${imagenPosterior}`);
         
@@ -136,13 +161,13 @@ async function descargarCertificado(usuario) {
             imagenPosteriorCache[imagenPosterior] = imagenPosteriorBase64;
         }
 
-        // 4. Crear PDF
+        // 5. Crear PDF
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
         const doc = await PDFDocument.create();
         
         // ========== HOJA 1: CERTIFICADO FRONTAL ==========
         const page1 = doc.addPage([842, 595]);
-        await dibujarPagina(doc, page1, imagenBase64, usuario, false);
+        await dibujarPagina(doc, page1, imagenFrontalBase64, usuario, false);
         console.log('✅ Página 1 (frontal) agregada');
 
         // ========== HOJA 2: CERTIFICADO POSTERIOR ==========
@@ -150,7 +175,7 @@ async function descargarCertificado(usuario) {
         await dibujarPagina(doc, page2, imagenPosteriorBase64, usuario, true);
         console.log('✅ Página 2 (posterior) agregada');
 
-        // 5. Guardar PDF
+        // 6. Guardar PDF
         const pdfBytes = await doc.save();
         const blob = new Blob([pdfBytes], { type: 'application/pdf' });
         const link = document.createElement('a');
@@ -250,62 +275,24 @@ async function dibujarPagina(doc, page, imagenBase64, usuario, esPosterior) {
             color: rgb(0.18, 0.18, 0.18),
         });
 
-        // ========== QR CODE (COMENTADO) ==========
-        // Cuando tengas la imagen del QR, descomenta esto:
-        /*
-        // Cargar imagen QR
-        const qrImage = await cargarImagenQR('qr_code.png');
-        if (qrImage) {
-            const qrWidth = 60;
-            const qrHeight = 60;
-            const qrX = pageWidth - 90;
-            const qrY = 30;
-            
-            page.drawImage(qrImage, {
-                x: qrX,
-                y: qrY,
-                width: qrWidth,
-                height: qrHeight,
-            });
-            console.log('✅ QR Code agregado');
-        }
-        */
-
-        // DNI (opcional)
-       // if (usuario.DNI) {
-        //    doc.setFontSize(12);
-         //   doc.setFont('helvetica', 'normal');
-         //   doc.setTextColor(0.3, 0.3, 0.3);
-            // Agregar DNI en alguna posición
-      //  }
+        // ============================================
+        // QR CODE (COMENTADO - NO SE USA)
+        // ============================================
+        // const qrImage = await cargarImagenQR('qr_code.png');
+        // if (qrImage) {
+        //     const qrWidth = 55;
+        //     const qrHeight = 55;
+        //     const qrX = pageWidth - 85;
+        //     const qrY = 25;
+        //     page.drawImage(qrImage, {
+        //         x: qrX,
+        //         y: qrY,
+        //         width: qrWidth,
+        //         height: qrHeight,
+        //     });
+        // }
     }
 }
-
-// ============================================
-// FUNCIÓN PARA CARGAR QR (COMENTADA)
-// ============================================
-/*
-async function cargarImagenQR(url) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) return null;
-        const bytes = await response.arrayBuffer();
-        const uint8 = new Uint8Array(bytes);
-        const { PDFDocument } = PDFLib;
-        const doc = await PDFDocument.create();
-        let image;
-        try {
-            image = await doc.embedJpg(uint8);
-        } catch (e) {
-            image = await doc.embedPng(uint8);
-        }
-        return image;
-    } catch (error) {
-        console.error('❌ Error cargando QR:', error);
-        return null;
-    }
-}
-*/
 
 // ============================================
 // LOGIN
@@ -319,7 +306,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const loadingMsg = document.getElementById('loadingMsg');
     const downloadSection = document.getElementById('downloadSection');
     
-    // Ocultar sección de descarga anterior
     downloadSection.style.display = 'none';
     
     if (!nombre || !contrasena) {
@@ -335,8 +321,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     if (usuariosData.length === 0) {
         await cargarDatos();
     }
-
-    //console.log(`🔍 Buscando: "${nombre}" con contraseña: "${contrasena}"`);
     
     const usuario = usuariosData.find(u => 
         u.nombre.toLowerCase() === nombre.toLowerCase() && 
@@ -349,23 +333,19 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     if (usuario) {
         usuarioActual = usuario;
-        // Mostrar botón de descarga
         downloadSection.style.display = 'block';
         errorMsg.style.display = 'none';
         
-        // Mensaje de éxito
         const successMsg = document.createElement('div');
         successMsg.id = 'successMsg';
         successMsg.style.cssText = 'color: #27ae60; text-align: center; margin-top: 10px; font-size: 14px;';
         successMsg.textContent = '✅ Sesión iniciada correctamente. Haz clic en "Descargar Certificado".';
         
-        // Eliminar mensaje anterior si existe
         const oldMsg = document.getElementById('successMsg');
         if (oldMsg) oldMsg.remove();
         
         document.getElementById('loginForm').appendChild(successMsg);
         
-        // Limpiar campos
         document.getElementById('nombre').value = '';
         document.getElementById('contrasena').value = '';
     } else {
