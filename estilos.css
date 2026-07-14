@@ -168,6 +168,9 @@ body {
 .logo-small:hover {
     transform: scale(1.05);
     transition: transform 0.3s;
+}.logo-cree:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s;
 }
 
 /* ============================================
