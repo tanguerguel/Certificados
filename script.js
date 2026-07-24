@@ -10,18 +10,18 @@ let imagenFrontalCache = {};
 const CONFIG = {
     // Mapeo de cursos a imágenes FRONTALES (base)
     cursoFrontal: {
-        'ingles'    : 'certificado_base.jpg',  
-        'ashaninka' : 'certificado_base.jpg',    
-        'matsigenka': 'certificado_base.jpg',
-        'español'   : 'certificado_base.jpg',
+        'ingles'    : 'certificado_base_i.jpg',  
+        'ashaninka' : 'certificado_base_a.jpg',    
+        'matsigenka': 'certificado_base_m.jpg',
+        'quechua'   : 'certificado_base.jpg',
         'default'   : 'certificado_base.jpg'  
     },
     // Mapeo de cursos a imágenes POSTERIORES
     cursoPosterior: {
-        'ingles'    : 'certificado_posterior1.jpg',  
-        'ashaninka' : 'certificado_posterior1.jpg',    
-        'matsigenka': 'certificado_posterior1.jpg',
-        'español'   : 'certificado_posterior1.jpg',
+        'ingles'    : 'certificado_posterior_i.jpg',  
+        'ashaninka' : 'certificado_posterior_a.jpg',    
+        'matsigenka': 'certificado_posterior_m.jpg',
+        'quechua'   : 'certificado_posterior1.jpg',
         'default'   : 'certificado_posterior1.jpg'  
     },
     posiciones: {
