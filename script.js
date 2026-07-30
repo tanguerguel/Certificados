@@ -35,11 +35,21 @@ const CONFIG = {
 // ============================================
 async function cargarDatos() {
     try {
-        const response = await fetch('data.json');
+        // Cargar el archivo ofuscado
+        console.log('📖 Cargando datos ofuscados...');
+        const response = await fetch('data.enc');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
+        
+        const encodedData = await response.text();
+        
+        // Decodificar Base64
+        const decodedData = atob(encodedData);
+        
+        // Convertir a JSON
+        const data = JSON.parse(decodedData);
         usuariosData = data.usuarios;
-        console.log(`✅ ${usuariosData.length} certificados cargados`);
+        
+        console.log(`✅ ${usuariosData.length} certificados cargados correctamente`);
         console.log('📋 Primer usuario:', usuariosData[0]);
     } catch (error) {
         console.warn('⚠️ Error cargando datos:', error);
@@ -300,7 +310,7 @@ async function dibujarPagina(doc, page, imagenBase64, usuario, esPosterior) {
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const nombre = document.getElementById('nombre').value.trim();
+    const DNI = document.getElementById('DNI').value.trim();
     const contrasena = document.getElementById('contrasena').value.trim();
     const errorMsg = document.getElementById('errorMsg');
     const loadingMsg = document.getElementById('loadingMsg');
@@ -308,7 +318,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     
     downloadSection.style.display = 'none';
     
-    if (!nombre || !contrasena) {
+    if (!DNI || !contrasena) {
         errorMsg.textContent = '❌ Completa todos los campos.';
         errorMsg.style.display = 'block';
         return;
@@ -322,16 +332,23 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         await cargarDatos();
     }
     
-    const usuario = usuariosData.find(u => 
-        u.nombre.toLowerCase() === nombre.toLowerCase() && 
-        u.contrasena === contrasena
-    );
+    // Buscar usuario por DNI (comparación exacta, sin toLowerCase)
+    const usuario = usuariosData.find(u => {
+        // Ambos deben ser strings para comparar
+        const dniUsuario = String(u.DNI || '').trim();
+        const dniIngresado = String(DNI).trim();
+        const contrasenaUsuario = String(u.contrasena || '').trim();
+        const contrasenaIngresada = String(contrasena).trim();
+        
+        return dniUsuario === dniIngresado && contrasenaUsuario === contrasenaIngresada;
+    });
 
-    console.log(`🔍 Usuario encontrado:`, usuario);
+     console.log(`🔍 Buscando DNI: "${DNI}"`);
+     console.log(`🔍 Usuario encontrado:`, usuario);
 
     loadingMsg.style.display = 'none';
 
-    if (usuario) {
+   if (usuario) {
         usuarioActual = usuario;
         downloadSection.style.display = 'block';
         errorMsg.style.display = 'none';
@@ -339,17 +356,17 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         const successMsg = document.createElement('div');
         successMsg.id = 'successMsg';
         successMsg.style.cssText = 'color: #27ae60; text-align: center; margin-top: 10px; font-size: 14px;';
-        successMsg.textContent = '✅ Sesión iniciada correctamente. Haz clic en "Descargar Certificado".';
+        successMsg.textContent = `✅ Bienvenido ${usuario.nombre}. Haz clic en "Descargar Certificado".`;
         
         const oldMsg = document.getElementById('successMsg');
         if (oldMsg) oldMsg.remove();
         
         document.getElementById('loginForm').appendChild(successMsg);
         
-        document.getElementById('nombre').value = '';
+        document.getElementById('DNI').value = '';
         document.getElementById('contrasena').value = '';
     } else {
-        errorMsg.textContent = '❌ Credenciales incorrectas. Verifica tu Nombre y contraseña.';
+        errorMsg.textContent = '❌ Credenciales incorrectas. Verifica tu DNI y contraseña.';
         errorMsg.style.display = 'block';
     }
 });
@@ -365,6 +382,40 @@ document.getElementById('btnDownload').addEventListener('click', async function(
     }
 });
 
+// ============================================
+// MOSTRAR/OCULTAR CONTRASEÑA CON FONT AWESOME
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('contrasena');
+    
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            
+            // Cambiar tipo de input
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            
+            // Cambiar ícono
+            const icon = this.querySelector('.eye-icon');
+            if (icon) {
+                icon.classList.remove('fa-eye', 'fa-eye-slash');
+                icon.classList.add(isPassword ? 'fa-eye-slash' : 'fa-eye');
+            }
+            
+            // Cambiar aria-label
+            this.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        });
+        
+        // Soporte para teclado
+        togglePassword.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    }
+});
 // ============================================
 // INICIAR
 // ============================================

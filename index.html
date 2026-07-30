@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Certificados - CUSCO</title>
     <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -19,8 +20,8 @@
                     <div class="instruction-item">
                         <span class="icon">1️⃣</span>
                         <div>
-                            <strong>Ingresa tu Apellido y Nombre</strong>
-                            <p>Escribe Tu Apellido y Nombre "</p>
+                            <strong>Ingresa tu DNI</strong>
+                            <p>Escribe Tu numero de DNI</p>
                         </div>
                     </div>
                     
@@ -29,6 +30,12 @@
                         <div>
                             <strong>Ingresa tu contraseña</strong>
                             <p>Numero de Registro de 5 digitos</p>
+                            
+                            <div class="logos">
+                                <img src="guia codigo.png" alt="Logo Cusco" class="guia"  >
+                                 <p>====></p>
+                                <img src="guia num codigo.png" alt="Logo Cusco" class="guia"  >
+                            </div>
                         </div>
                     </div>
                     
@@ -77,13 +84,18 @@
                     
                     <form id="loginForm">
                         <div class="form-group">
-                            <label for="nombre">Usuario (Nombre):</label>
-                            <input type="text" id="nombre" placeholder="Ingresa tu Nombre" autocomplete="username" required>
+                            <label for="DNI">Usuario (DNI):</label>
+                            <input type="text" id="DNI" placeholder="Ingresa tu DNI" autocomplete="username" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="contrasena">Contraseña:</label>
-                            <input type="password" id="contrasena" placeholder="Ingresa tu contraseña" autocomplete="current-password" required>
+                            <div class="password-wrapper">
+                                <input type="password" id="contrasena" placeholder="Es tu Numero de Registro" autocomplete="current-password" required>
+                                <span class="password-toggle" id="togglePassword" role="button" tabindex="0" aria-label="Mostrar contraseña">
+                                    <i class="fas fa-eye eye-icon"></i>
+                                </span>
+                            </div>
                         </div>
                                     
                         <button type="submit" class="btn-login">Ingresar</button>

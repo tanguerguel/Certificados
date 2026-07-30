@@ -155,7 +155,7 @@ body {
 }
 
 .logo-small {
-    width: 250px ;          /* ← AJUSTA ESTE VALOR */
+    width: 200px ;          /* ← AJUSTA ESTE VALOR */
     height: auto;
     display: block;
     margin: 0 auto;
@@ -176,6 +176,14 @@ body {
 }.logo-cree:hover {
     transform: scale(1.05);
     transition: transform 0.3s;
+}
+.guia{
+    width: 75px;
+    cursor: pointer;
+  transition: transform 0.3s ease;
+}
+.guia:hover {
+   transform: scale(1.75);
 }
 
 /* ============================================
@@ -315,7 +323,58 @@ body {
     font-size: 13px;
     display: none;
 }
+.password-wrapper {
+    position: relative;  /* ← IMPORTANTE: para que el icono se posicione dentro */
+    display: flex;
+    align-items: center;
+    width: 100%;         /* ← Asegura que ocupe todo el ancho */
+}
 
+.password-wrapper input {
+    width: 100%;
+    padding: 12px 50px 12px 16px;  /* ← Espacio a la derecha para el icono */
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 15px;
+    background: #f8f9fa;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    height: 48px;
+    box-sizing: border-box;  /* ← Importante para que el padding no desborde */
+}
+
+.password-wrapper input:focus {
+    outline: none;
+    border-color: #0f3460;
+    box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
+    background: white;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 14px;           /* ← Distancia desde el borde derecho del input */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
+    font-size: 18px;
+    z-index: 2;
+    padding: 4px;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    color: #0f3460;
+}
+
+.password-toggle .eye-icon {
+    font-size: 18px;
+    line-height: 1;
+}
 /* ============================================
    RESPONSIVE
    ============================================ */
