@@ -35,17 +35,17 @@ const CONFIG = {
 // ============================================
 async function cargarDatos() {
     try {
-        // Cargar el archivo ofuscado
         console.log('📖 Cargando datos ofuscados...');
         const response = await fetch('data.enc');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const encodedData = await response.text();
         
-        // Decodificar Base64
-        const decodedData = atob(encodedData);
+        // Decodificar Base64 -> bytes -> UTF-8 (arregla acentos, ñ, comillas, etc.)
+        const binaryString = atob(encodedData);
+        const bytes = Uint8Array.from(binaryString, c => c.charCodeAt(0));
+        const decodedData = new TextDecoder('utf-8').decode(bytes);
         
-        // Convertir a JSON
         const data = JSON.parse(decodedData);
         usuariosData = data.usuarios;
         
@@ -72,6 +72,18 @@ function cargarLibreria(url) {
         script.onerror = reject;
         document.head.appendChild(script);
     });
+}
+
+// ============================================
+// Cachear las fuentes igual que haces con las imágenes
+// ============================================
+let fontBoldCache = null;
+let fontRegularCache = null;
+
+async function cargarFontBytes(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Error cargando fuente: ${response.status}`);
+    return await response.arrayBuffer();
 }
 
 // ============================================
@@ -148,6 +160,9 @@ async function descargarCertificado(usuario) {
         // 1. Cargar pdf-lib
         console.log('📚 Cargando pdf-lib...');
         await cargarLibreria('https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js');
+
+        await cargarLibreria('https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js');
+
         console.log('✅ pdf-lib cargado');
 
         // 2. Obtener imagen frontal según curso
@@ -175,14 +190,29 @@ async function descargarCertificado(usuario) {
         const { PDFDocument, rgb, StandardFonts } = PDFLib;
         const doc = await PDFDocument.create();
         
+        // Registrar fontkit ANTES de embeber fuentes custom
+        doc.registerFontkit(fontkit);
+
+        // Cargar y embeber las fuentes (con caché)
+        if (!fontBoldCache) {
+            fontBoldCache = await cargarFontBytes('noto-sans-v42-latin-700.ttf');
+        }
+        if (!fontRegularCache) {
+            fontRegularCache = await cargarFontBytes('noto-sans-v42-latin-regular.ttf');
+        }
+
+        const fontBold = await doc.embedFont(fontBoldCache);
+        const fontRegular = await doc.embedFont(fontRegularCache);
+
         // ========== HOJA 1: CERTIFICADO FRONTAL ==========
         const page1 = doc.addPage([842, 595]);
-        await dibujarPagina(doc, page1, imagenFrontalBase64, usuario, false);
+        await dibujarPagina(doc, page1, imagenFrontalBase64, usuario, false, fontBold, fontRegular);
+
         console.log('✅ Página 1 (frontal) agregada');
 
         // ========== HOJA 2: CERTIFICADO POSTERIOR ==========
         const page2 = doc.addPage([842, 595]);
-        await dibujarPagina(doc, page2, imagenPosteriorBase64, usuario, true);
+        await dibujarPagina(doc, page2, imagenPosteriorBase64, usuario, true, fontBold, fontRegular);
         console.log('✅ Página 2 (posterior) agregada');
 
         // 6. Guardar PDF
@@ -218,8 +248,8 @@ async function descargarCertificado(usuario) {
 // ============================================
 // DIBUJAR PÁGINA DEL PDF
 // ============================================
-async function dibujarPagina(doc, page, imagenBase64, usuario, esPosterior) {
-    const { rgb, StandardFonts } = PDFLib;
+async function dibujarPagina(doc, page, imagenBase64, usuario, esPosterior, fontBold, fontRegular) {
+    const { rgb } = PDFLib;
     
     // Convertir imagen
     const imageBytes = await fetch(imagenBase64).then(res => res.arrayBuffer());
@@ -255,33 +285,31 @@ async function dibujarPagina(doc, page, imagenBase64, usuario, esPosterior) {
 
     // Si es la página frontal, agregar texto
     if (!esPosterior) {
-        // NOMBRE
-        const font = await doc.embedFont(StandardFonts.HelveticaBold);
+        // NOMBRE — ya NO usamos StandardFonts, usamos fontBold (Noto Sans)
         const fontSize = 27;
-        const text = usuario.nombre.toUpperCase();
-        const textWidth = font.widthOfTextAtSize(text, fontSize);
+        const text = usuario.nombre.toUpperCase(); // ya no hace falta sanitizar
+        const textWidth = fontBold.widthOfTextAtSize(text, fontSize);
         const textX = ((pageWidth - textWidth) / 2) + 50;
         const textY = pageHeight / 2 + 53;
-        
+
         page.drawText(text, {
             x: textX,
             y: textY,
             size: fontSize,
-            font: font,
+            font: fontBold,
             color: rgb(0.1, 0.1, 0.18),
         });
 
         // NÚMERO DE REGISTRO
-        const fontNormal = await doc.embedFont(StandardFonts.Helvetica);
         const fontSizeReg = 16;
         const regX = pageWidth - 75;
         const regY = 20;
-        
+
         page.drawText(usuario.num_registro, {
             x: regX,
             y: regY,
             size: fontSizeReg,
-            font: fontNormal,
+            font: fontRegular,
             color: rgb(0.18, 0.18, 0.18),
         });
 
